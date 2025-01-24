@@ -4,6 +4,34 @@ This documentation serves as a guide for maintaining and implementing features i
 
 ---
 
+## **Table of Contents**
+- [Network Infrastructure Workbook Documentation](#network-infrastructure-workbook-documentation)
+  - [**Table of Contents**](#table-of-contents)
+  - [**Use Case Scenarios**](#use-case-scenarios)
+    - [When to Use This Documentation:](#when-to-use-this-documentation)
+  - [**Setup Instructions**](#setup-instructions)
+    - [1. **Access the Google Sheet**](#1-access-the-google-sheet)
+    - [2. **Open Apps Script**](#2-open-apps-script)
+    - [3. **Global Configuration File**](#3-global-configuration-file)
+      - [What you need to do](#what-you-need-to-do)
+      - [Example:](#example)
+      - [Example:](#example-1)
+    - [**4. Creating a Function for a Target Sheet**](#4-creating-a-function-for-a-target-sheet)
+      - [**Example Function**](#example-function)
+    - [**5. Target Sheet Identification**](#5-target-sheet-identification)
+    - [**6. Condition Statement for Status Updates**](#6-condition-statement-for-status-updates)
+      - [**Key Points:**](#key-points)
+    - [4. Save and Deploy](#4-save-and-deploy)
+  - [**Trigger Setup**](#trigger-setup)
+    - [1. **Create a Trigger**](#1-create-a-trigger)
+    - [2. **Save and Test**](#2-save-and-test)
+  - [**Concepts of the Code**](#concepts-of-the-code)
+    - [Change Status with Time Capture](#change-status-with-time-capture)
+    - [Dynamic Column Selector](#dynamic-column-selector)
+    - [**Notes**](#notes)
+
+---
+
 ## **Use Case Scenarios**
 ### When to Use This Documentation:
 1. **Change Status with Time Capture**:  
@@ -26,8 +54,7 @@ This documentation serves as a guide for maintaining and implementing features i
 - Create a new script file.
 
 ### 3. **Global Configuration File**
-- Create a file named `config.gs` in the Apps Script project.
-- Add the following global configuration object to define default column indices:
+- The global configuration object has already been set up in the file `config.gs`. It defines default column indices used throughout the scripts:
 
 ```javascript
 // Global Configuration Object
@@ -40,8 +67,107 @@ var CONFIG = {
   COL_TASK_STATUS: 17  // Default Task Status column
 };
 ```
-- Use these configuration variables throughout your scripts to reference column indices.
-- If columns are added, removed, or reordered in the Google Sheet, update the values in `config.gs`.
+#### What you need to do
+1. **Verify Column Indices:**
+   
+   Check that the indices in the Google Sheet match those defined in the `CONFIG` object. If they align, no changes are needed.
+
+#### Example:
+```js
+function changeStatusInitTesting() {
+    // Get the active cell, sheet, column, row, and value
+    var activeCell = SpreadsheetApp.getActiveRange();
+    var activeSheet = activeCell.getSheet();
+    var activeColumn = activeCell.getColumn();
+    var activeRow = activeCell.getRow();
+    var activeValue = activeCell.getValue(); // Value of the dropdown
+    
+    var startDateCol = CONFIG.COL_START_DATE; // Start Date column
+    var startTimeCol = CONFIG.COL_START_TIME; // Start Time column
+    var endDateCol = CONFIG.COL_END_DATE;   // End Date column
+    var endTimeCol = CONFIG.COL_END_TIME;   // End Time column
+    var lastUpdateCol = 22; // Last Update column
+    var taskStatusCol = CONFIG.COL_TASK_STATUS; // Task Status column 
+```
+
+2. **Adjust When Necessary:**
+   
+   If the column structure in the Google Sheet changes (e.g., columns are added, removed, or reordered), do the following:
+   - Directly input the updated column selector values inside the `changeStatus` function.
+
+#### Example:
+```js
+function changeStatusWapTermination() {
+  // Get the active cell, sheet, column, row, and value
+  var activeCell = SpreadsheetApp.getActiveRange();
+  var activeSheet = activeCell.getSheet();
+  var activeColumn = activeCell.getColumn();
+  var activeRow = activeCell.getRow();
+  var activeValue = activeCell.getValue(); // Value of the dropdown
+  
+  var startDateCol = 8; // Start Date column
+  var startTimeCol = 9; // Start Time column
+  var endDateCol = 10;   // End Date column
+  var endTimeCol = 11;   // End Time column
+  var lastUpdateCol = 18; // Last Update column
+  var taskStatusCol = 15; // Task Status column   
+```
+
+### **4. Creating a Function for a Target Sheet**
+When working with a specific sheet, you need to create a dedicated function, This section outlines the steps to create a function that corresponds to a specific sheet.
+
+#### **Example Function**
+For the sheet named "Tagging", create a function called `changeStatusTagging`. This will ensure proper handling of status updates for the "Tagging" sheet
+
+```js
+function changeStatusTagging() {
+  // Script logic for handling status updates on the "Tagging" sheet
+}
+```
+### **5. Target Sheet Identification**
+The `TARGET_SHEET_ID` is used to specify the GID *(Google Sheet ID)* of the target sheet. This ensures that the script only executes for the intended sheet. Here's how to set it up:
+
+```js
+const TARGET_SHEET_ID = "1086098120"; // The GID of the target sheet
+```
+
+> **Key Notes:**
+>
+> - Replace `1086098120` with the actual GID of the desired sheet. You can find the GID in the URL of the Google Sheet (after `gid=`).
+> - This constant will be referenced in your function to ensure the script targets the correct sheet.
+
+### **6. Condition Statement for Status Updates**
+The following condition statement is used to update column values for Start Date, Start Time, End Date, End Time, and Last Update, based on the dropdown value in the Task Status column:
+
+```js
+// Check the dropdown value and update corresponding columns
+if (activeValue === "On-Going") {
+  // Set Start Date and Start Time
+  activeSheet.getRange(activeRow, lastUpdateCol).setValue(new Date()); // Set Last Update
+  activeSheet.getRange(activeRow, startDateCol).setValue(formattedDate); // Set Start Date
+  activeSheet.getRange(activeRow, startTimeCol).setValue(formattedTime); // Set Start Time
+} else if (activeValue === "Completed") {
+  // Set End Date and End Time
+  activeSheet.getRange(activeRow, lastUpdateCol).setValue(new Date()); // Set Last Update
+  activeSheet.getRange(activeRow, endDateCol).setValue(formattedDate); // Set End Date
+  activeSheet.getRange(activeRow, endTimeCol).setValue(formattedTime); // Set End Time
+} else if (activeValue === "Backjob") {
+  // Set Backjob Date to Last Update column
+  activeSheet.getRange(activeRow, lastUpdateCol).setValue(new Date());
+}
+```
+
+#### **Key Points:**
+- The `Last Update` column (`lastUpdateCol)` is always updated with the current timestamp whenever the status changes.
+- The `Start Date` and `Start Time` columns are set when the status is changed to **On-Going**.
+- The `End Date` and `End Time` columns are set when the status is changed to **Completed**.
+- The `Last Update` column is used to log **On-going**,**Backjob**, and **Completed**.
+
+> **Notes:**
+> 
+>  Ensure that the `formattedDate` and `formattedTime` variables are defined in your script to correctly format the current date and time before updating the cells.
+>
+> Always test the script in a good controlled environment to verify proper behavior after making changes.
 
 ### 4. Save and Deploy
 - Save the script project after making necessary changes.
