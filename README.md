@@ -8,32 +8,26 @@ This documentation serves as a guide for maintaining and implementing features i
 - [Network Infrastructure Workbook Documentation](#network-infrastructure-workbook-documentation)
   - [**Table of Contents**](#table-of-contents)
   - [**Use Case Scenarios**](#use-case-scenarios)
-    - [When to Use This Documentation:](#when-to-use-this-documentation)
   - [**Setup Instructions**](#setup-instructions)
     - [1. **Access the Google Sheet**](#1-access-the-google-sheet)
     - [2. **Open Apps Script**](#2-open-apps-script)
     - [3. **Global Configuration File**](#3-global-configuration-file)
       - [What you need to do](#what-you-need-to-do)
-      - [Example:](#example)
-      - [Example:](#example-1)
     - [**4. Creating a Function for a Target Sheet**](#4-creating-a-function-for-a-target-sheet)
-      - [**Example Function**](#example-function)
     - [**5. Target Sheet Identification**](#5-target-sheet-identification)
     - [**6. Condition Statement for Status Updates**](#6-condition-statement-for-status-updates)
-      - [**Key Points:**](#key-points)
-    - [4. Save and Deploy](#4-save-and-deploy)
+    - [**4. Save and Deploy**](#4-save-and-deploy)
   - [**Trigger Setup**](#trigger-setup)
     - [1. **Create a Trigger**](#1-create-a-trigger)
     - [2. **Save and Test**](#2-save-and-test)
   - [**Concepts of the Code**](#concepts-of-the-code)
     - [Change Status with Time Capture](#change-status-with-time-capture)
     - [Dynamic Column Selector](#dynamic-column-selector)
-    - [**Notes**](#notes)
 
 ---
 
 ## **Use Case Scenarios**
-### When to Use This Documentation:
+**When to Use This Documentation:**
 1. **Change Status with Time Capture**:  
    If you need to implement a feature to record status changes along with timestamps in the Google Sheet, refer to this guide for instructions.
    
@@ -72,7 +66,7 @@ var CONFIG = {
    
    Check that the indices in the Google Sheet match those defined in the `CONFIG` object. If they align, no changes are needed.
 
-#### Example:
+**Example:**
 ```js
 function changeStatusInitTesting() {
     // Get the active cell, sheet, column, row, and value
@@ -95,7 +89,7 @@ function changeStatusInitTesting() {
    If the column structure in the Google Sheet changes (e.g., columns are added, removed, or reordered), do the following:
    - Directly input the updated column selector values inside the `changeStatus` function.
 
-#### Example:
+**Example:**
 ```js
 function changeStatusWapTermination() {
   // Get the active cell, sheet, column, row, and value
@@ -116,7 +110,7 @@ function changeStatusWapTermination() {
 ### **4. Creating a Function for a Target Sheet**
 When working with a specific sheet, you need to create a dedicated function, This section outlines the steps to create a function that corresponds to a specific sheet.
 
-#### **Example Function**
+**Example Function**
 For the sheet named "Tagging", create a function called `changeStatusTagging`. This will ensure proper handling of status updates for the "Tagging" sheet
 
 ```js
@@ -157,19 +151,20 @@ if (activeValue === "On-Going") {
 }
 ```
 
-#### **Key Points:**
-- The `Last Update` column (`lastUpdateCol)` is always updated with the current timestamp whenever the status changes.
-- The `Start Date` and `Start Time` columns are set when the status is changed to **On-Going**.
-- The `End Date` and `End Time` columns are set when the status is changed to **Completed**.
-- The `Last Update` column is used to log **On-going**,**Backjob**, and **Completed**.
-
+> **Key Points:**
+>
+> - The `Last Update` column (`lastUpdateCol)` is always updated with the current timestamp whenever the status changes.
+> - The `Start Date` and `Start Time` columns are set when the status is changed to **On-Going**.
+> - The `End Date` and `End Time` columns are set when the status is changed to **Completed**.
+> - The `Last Update` column is used to log **On-going**,**Backjob**, and **Completed**.
+>
 > **Notes:**
 > 
 >  Ensure that the `formattedDate` and `formattedTime` variables are defined in your script to correctly format the current date and time before updating the cells.
 >
 > Always test the script in a good controlled environment to verify proper behavior after making changes.
 
-### 4. Save and Deploy
+### **4. Save and Deploy**
 - Save the script project after making necessary changes.
 
 ## **Trigger Setup**
@@ -196,12 +191,11 @@ if (activeValue === "On-Going") {
 ` The script uses the `CONFIG` global object to reference specific columns indices in the sheet.
 - If the structure of the sheet changes:
   - Identify the new column positions.
-  - Update the values in config.gs to reflect the changes.
 
-### **Notes**
-- Ensure all scripts are tested before deploying them to production.
-- Any changes to the columns in the Google Sheet require manual updates to `config.gs` to avoid errors.
-
+> **Notes**
+> - Ensure all scripts are tested before deploying them to production.
+> - Any changes to the columns in the Google Sheet require manual updates to `config.gs` to avoid errors.
+>
 > For further assistance or troubleshooting, contact the administrator.
 >
 > This update integrates the `config.gs` file into the documentation while explaining its purpose and use. Let me know if anything else needs refinement!
