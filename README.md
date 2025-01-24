@@ -12,7 +12,6 @@ This documentation serves as a guide for maintaining and implementing features i
     - [1. **Access the Google Sheet**](#1-access-the-google-sheet)
     - [2. **Open Apps Script**](#2-open-apps-script)
     - [3. **Global Configuration File**](#3-global-configuration-file)
-      - [What you need to do](#what-you-need-to-do)
     - [**4. Creating a Function for a Target Sheet**](#4-creating-a-function-for-a-target-sheet)
     - [**5. Target Sheet Identification**](#5-target-sheet-identification)
     - [**6. Condition Statement for Status Updates**](#6-condition-statement-for-status-updates)
@@ -45,7 +44,12 @@ This documentation serves as a guide for maintaining and implementing features i
 ### 2. **Open Apps Script**
 - Open the **Network Infrastructure** Google Sheet.  
 - Navigate to `Extensions` > `Apps Script`.  
+
+![Navigate Appscript](/img/navigate-appscript.png)
+
 - Create a new script file.
+  
+![Create New Script](/img/create-new-script.png)
 
 ### 3. **Global Configuration File**
 - The global configuration object has already been set up in the file `config.gs`. It defines default column indices used throughout the scripts:
@@ -61,7 +65,7 @@ var CONFIG = {
   COL_TASK_STATUS: 17  // Default Task Status column
 };
 ```
-#### What you need to do
+**What you need to do**
 1. **Verify Column Indices:**
    
    Check that the indices in the Google Sheet match those defined in the `CONFIG` object. If they align, no changes are needed.
@@ -121,6 +125,8 @@ function changeStatusTagging() {
 ### **5. Target Sheet Identification**
 The `TARGET_SHEET_ID` is used to specify the GID *(Google Sheet ID)* of the target sheet. This ensures that the script only executes for the intended sheet. Here's how to set it up:
 
+![Picture of how to get Google ID](/img/get-gid.png)
+
 ```js
 const TARGET_SHEET_ID = "1086098120"; // The GID of the target sheet
 ```
@@ -167,6 +173,8 @@ if (activeValue === "On-Going") {
 ### **4. Save and Deploy**
 - Save the script project after making necessary changes.
 
+![Picture How to Save Script](/img/save-script.png)
+
 ## **Trigger Setup**
 
 ### 1. **Create a Trigger**
@@ -177,9 +185,13 @@ if (activeValue === "On-Going") {
   - **Immediate Notifications:** Enable instant notifications for changes.
   - **Event Source:** `onChange`.
 
+![Picture How to Create New Trigger](/img/create-new-trigger.png)
+
 ### 2. **Save and Test**
 - Save the trigger configuration.
 - Run the script manually to test functionality and make adjustments as necessary.
+
+![Picture How to Test Script](/img/run-script.png)
 
 ## **Concepts of the Code**
 
@@ -189,8 +201,10 @@ if (activeValue === "On-Going") {
 
 ### Dynamic Column Selector
 ` The script uses the `CONFIG` global object to reference specific columns indices in the sheet.
-- If the structure of the sheet changes:
-  - Identify the new column positions.
+
+If the structure of the sheet changes:
+
+- Identify the new column positions.
 
 > **Notes**
 > - Ensure all scripts are tested before deploying them to production.
